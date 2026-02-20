@@ -54,8 +54,8 @@ jobs:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "Azovsky Test results - ${{ github.repository }}"
+          to: qatestkra@gmail.com
+          from: GitHub CI
           body: |
            Azovsky Tests completed.
            Report: https://kratakey.github.io/Test
-           to: qatestkra@gmail.com
-          from: GitHub CI
