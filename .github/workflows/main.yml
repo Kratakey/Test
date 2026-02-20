@@ -27,14 +27,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean test -Denvironment=local_chrome -DbrowserVersion=128.0 -Dthreads=8
 
-      - name: Allure Report action from marketplace
-        uses: simple-elf/allure-report-action@master
-        if: always()
-        with:
-          allure_results: allure-results
-          allure_history: allure-history
-          keep_reports: 20
-
       - name: Test marketplace action
         uses: simple-elf/allure-report-action@master
         if: always()
@@ -47,7 +39,7 @@ jobs:
 
       - name: Deploy report to Github Pages
         if: always()
-        uses: peaceiris/actions-gh-pages@v2
+        uses: peaceiris/actions-gh-pages@v4
         env:
           PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PUBLISH_BRANCH: gh-pages
