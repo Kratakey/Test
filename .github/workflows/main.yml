@@ -27,6 +27,14 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean test -Denvironment=local_chrome -DbrowserVersion=128.0 -Dthreads=8
 
+      - name: Get Allure history
+        uses: actions/checkout@v3
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
       - name: Test marketplace action
         uses: simple-elf/allure-report-action@master
         if: always()
