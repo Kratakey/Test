@@ -31,9 +31,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
+        if: always()
         uses: actions/checkout@v4
 
       - name: Get Allure history
+        if: always()
         uses: actions/checkout@v4
         continue-on-error: true
         with:
@@ -41,6 +43,7 @@ jobs:
           path: gh-pages
 
       - name: Test marketplace action
+        if: always()
         uses: simple-elf/allure-report-action@master
         with:
           allure_results: allure-results
@@ -48,6 +51,7 @@ jobs:
           keep_reports: 20
 
       - name: Deploy report to Github Pages
+        if: always()
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
