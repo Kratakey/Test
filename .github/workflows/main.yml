@@ -27,13 +27,15 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean test -Denvironment=local_chrome -DbrowserVersion=128.0 -Dthreads=8
 
-      - name: Allure Report action from marketplace
+      - name: Test marketplace action
         uses: simple-elf/allure-report-action@master
         if: always()
+        id: allure-report
         with:
-          allure_results: allure-results
+          allure_results: build/allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
           allure_history: allure-history
-          keep_reports: 20
 
       - name: Deploy report to Github Pages
         if: always()
