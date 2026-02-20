@@ -9,11 +9,6 @@ out/
 target
 build
 
-
-###Allure###
-.allure
-allure-results
-
 ### Eclipse ###
 .apt_generated
 .classpath
