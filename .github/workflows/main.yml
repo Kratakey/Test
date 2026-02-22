@@ -1,36 +1,73 @@
 name: Selenide Java CI
 
 on: [ push, workflow_dispatch ]
+
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+env:
+  JAVA_VERSION: '17'
+  BROWSER_VERSION: '128.0'
+  THREADS: '8'
+
 jobs:
   integration-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+
     services:
       selenium:
-        image: selenoid/chrome:128.0
+        image: selenoid/chrome:${{ env.BROWSER_VERSION }}
         ports:
           - 4444:4444
-        options: --shm-size="2g"
+        options: >-
+          --shm-size="2g"
+          --health-cmd="curl -f http://localhost:4444/status || exit 1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
         with:
-          java-version: 17
-          distribution: 'adopt'
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'gradle'
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew clean test -Denvironment=local_chrome -DbrowserVersion=128.0 -Dthreads=8
+
+      - name: Wait for Selenium to be ready
+        run: |
+          for i in {1..30}; do
+            curl -sf http://localhost:4444/status && break
+            echo "Waiting for Selenium... ($i/30)"
+            sleep 2
+          done
+
+      - name: Build and run tests
+        run: |
+          ./gradlew clean test \
+            -Denvironment=local_chrome \
+            -DbrowserVersion=${{ env.BROWSER_VERSION }} \
+            -Dthreads=${{ env.THREADS }} \
+            --no-daemon  # Экономия памяти в CI окружении
+
       - name: Get Allure history
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: always()
         continue-on-error: true
         with:
           ref: gh-pages
           path: gh-pages
-      - name: Test marketplace action
+
+      - name: Generate Allure report
         uses: simple-elf/allure-report-action@master
         if: always()
         id: allure-report
@@ -39,23 +76,39 @@ jobs:
           gh_pages: gh-pages
           allure_report: allure-report
           allure_history: allure-history
-      - name: Deploy report to Github Pages
+          keep_reports: 20
+
+      - name: Deploy report to GitHub Pages
         if: always()
-        uses: peaceiris/actions-gh-pages@v2
-        env:
-          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PUBLISH_BRANCH: gh-pages
-          PUBLISH_DIR: allure-history
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
+
+      - name: Upload test artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          path: |
+            build/reports/
+            build/allure-results/
+          retention-days: 7
+
       - name: Send email with results
+        if: always()
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
+          secure: true
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "Azovsky Test results - ${{ github.repository }}"
+          subject: "[${{ job.status }}] Test results — ${{ github.repository }}"
           to: qatestkra@gmail.com
-          from: GitHub CI
+          from: "GitHub CI <${{ secrets.EMAIL_USERNAME }}>"
           body: |
-           Azovsky Tests completed.
-           Report: https://kratakey.github.io/Test
+            Azovsky Tests completed with status: ${{ job.status }}
+
+            Report:    https://kratakey.github.io/Test
