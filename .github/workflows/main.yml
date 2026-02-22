@@ -109,6 +109,6 @@ jobs:
           to: qatestkra@gmail.com
           from: "GitHub CI <${{ secrets.EMAIL_USERNAME }}>"
           body: |
-            Azovsky Tests completed with status: ${{ job.status }}
+            Azovsky tests completed with status: ${{ job.status }}
 
-            Report:    https://kratakey.github.io/Test
+            See report:    https://kratakey.github.io/Test
