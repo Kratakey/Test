@@ -127,20 +127,14 @@ jobs:
           STATUS="${{ job.status }}"
           EMOJI=$([ "$STATUS" = "success" ] && echo "✅" || echo "❌")
           
-          TEXT="${EMOJI} *Test Report* — \`${{ github.repository }}\`
-          ━━━━━━━━━━━━━━━━━━━━
-          🌿 Branch:    \`${{ github.ref_name }}\`
-          👤 Actor:     \`${{ github.actor }}\`
-          🔖 Commit:    \`$(echo ${{ github.sha }} | cut -c1-7)\`
-          ━━━━━━━━━━━━━━━━━━━━
-          📊 *Results:*
-            ✅ Passed:  \`${PASSED}\`
-            ❌ Failed:  \`${FAILED}\`
-            💥 Broken:  \`${BROKEN}\`
-            ⏭ Skipped: \`${SKIPPED}\`
-            📦 Total:   \`${TOTAL}\`
-          ━━━━━━━━━━━━━━━━━━━━
-          [📄 Open Allure Report](https://kratakey.github.io/Test)"
+          TEXT="${EMOJI} *Test Results \`${{ github.repositoryUrl }}\`:*
+            🟢 Passed:  \`${PASSED}\`
+            🔴 Failed:  \`${FAILED}\`
+            🟡 Broken:  \`${BROKEN}\`
+            🔘 Skipped: \`${SKIPPED}\`
+               Total:   \`${TOTAL}\`
+          
+          [Open Allure Report](https://kratakey.github.io/Test)"
           
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
             -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
