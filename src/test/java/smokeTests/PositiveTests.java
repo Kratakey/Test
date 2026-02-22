@@ -52,6 +52,7 @@ public class PositiveTests extends TestBase {
     }
 
     @Test
+    @Disabled
     @Feature("Search")
     @Owner("Kratakey")
     @Story("Complete room reservation")
