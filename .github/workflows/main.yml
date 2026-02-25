@@ -57,7 +57,7 @@ jobs:
             -Denvironment=local_chrome \
             -DbrowserVersion=${{ env.BROWSER_VERSION }} \
             -Dthreads=${{ env.THREADS }} \
-            --no-daemon  # Экономия памяти в CI окружении
+            --no-daemon
 
       - name: Get Allure history
         uses: actions/checkout@v4
