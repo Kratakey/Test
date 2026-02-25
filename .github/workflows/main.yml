@@ -54,7 +54,7 @@ jobs:
       - name: Build and run tests
         run: |
           ./gradlew clean test \
-            -Denvironment=local_chrome \
+            -Denvironment=remote_chrome \
             -DbrowserVersion=${{ env.BROWSER_VERSION }} \
             -Dthreads=${{ env.THREADS }} \
             --no-daemon
