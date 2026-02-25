@@ -91,12 +91,22 @@ jobs:
 
       - name: Deploy report to GitHub Pages
         if: ${{ always() && (!inputs.report_on_failure_only || failure()) }}
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-history
           force_orphan: true
+
+      - name: Upload artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts-${{ inputs.job_label }}
+          path: |
+            build/reports/
+            build/allure-results/
+          retention-days: 20
 
       - name: Calculate REPORT_NUM
         run: |
