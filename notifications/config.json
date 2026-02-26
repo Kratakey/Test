@@ -1,8 +1,9 @@
 {
   "base": {
-    "project": "Test",
-    "environment": "GitHub Actions",
-    "comment": " ",
+    "project": "",
+    "environment": "",
+    "comment": "",
+    "reportLink": "",
     "language": "en",
     "allureFolder": "allure-report/",
     "enableChart": true
