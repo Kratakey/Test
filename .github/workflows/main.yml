@@ -118,6 +118,14 @@ jobs:
             ${{ inputs.job_label }} finished with status: ${{ job.status }}
             See report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}
 
+      - name: Debug secrets
+        run: |
+          echo "TOKEN length: ${#TOKEN}"
+          echo "CHAT length: ${#CHAT}"
+        env:
+          TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+
       - name: send telegram message on push
         if: always()
         run: |
