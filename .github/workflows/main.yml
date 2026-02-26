@@ -118,25 +118,10 @@ jobs:
             ${{ inputs.job_label }} finished with status: ${{ job.status }}
             See report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}
 
-      - name: Debug secrets
-        run: |
-          echo "TOKEN length: ${#TOKEN}"
-          echo "CHAT length: ${#CHAT}"
-        env:
-          TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
-
       - name: send telegram message on push
         if: always()
         env:
           TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-            java "-DconfigFile=notifications/config.json" \
-                 "-Dnotifications.base.project=${{ inputs.job_label }}" \
-                 "-Dnotifications.base.environment=GitHub Actions" \
-                 "-Dnotifications.base.comment= " \
-                 "-Dnotifications.base.reportLink=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}" \
-                 "-Dnotifications.telegram.token=$TG_TOKEN" \
-                 "-Dnotifications.telegram.chat=$TG_CHAT" \
-                 -jar notifications/allure-notifications.jar
+          java "-DconfigFile=notifications/config.json" "-Dnotifications.telegram.token=${{ secrets.TELEGRAM_BOT_TOKEN }}" "-Dnotifications.telegram.chat=${{ secrets.TELEGRAM_CHAT_ID }}" -jar allure-notifications.jar

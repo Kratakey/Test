@@ -4,7 +4,8 @@
     "language": "en",
     "allureFolder": "allure-report/",
     "enableChart": true,
-    "enableSuitesPublishing": true
+    "enableSuitesPublishing": true,
+    "comment": " "
   },
   "telegram": {
     "templatePath": "/templates/telegram.ftl"
