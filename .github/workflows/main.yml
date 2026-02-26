@@ -123,6 +123,7 @@ jobs:
         run: |
           java -DconfigFile=notifications/config.json \
             -Dnotifications.base.allureFolder="allure-report/" \
+            -Dnotifications.base.language="en" \
             -Dnotifications.base.reportLink="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}" \
             -Dnotifications.base.project="${{ inputs.job_label }}" \
             -Dnotifications.telegram.token="${{ secrets.TELEGRAM_BOT_TOKEN }}" \
