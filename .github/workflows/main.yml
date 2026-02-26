@@ -131,7 +131,7 @@ jobs:
         env:
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
           TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
-          ALLURE_REPORT_URL: ${{ vars.ALLURE_REPORT_URL }}
+          ALLURE_REPORT_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}
         run: |
           java "-DconfigFile=notifications/config.json" \
                "-Dnotifications.base.reportLink=${ALLURE_REPORT_URL}" \
