@@ -1,5 +1,6 @@
 {
   "base": {
+    "project": "Test",
     "language": "en",
     "allureFolder": "allure-report/",
     "enableChart": true,
