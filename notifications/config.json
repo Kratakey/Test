@@ -3,7 +3,7 @@
     "logo": "",
     "project": "",
     "environment": "GitHub Actions",
-    "comment": "",
+    "comment": " ",
     "reportLink": "",
     "language": "en",
     "allureFolder": "allure-report/",
@@ -14,8 +14,6 @@
   "telegram": {
     "token": "",
     "chat": "",
-    "topic": "",
-    "replyTo": "",
     "templatePath": "/templates/telegram.ftl"
   }
 }

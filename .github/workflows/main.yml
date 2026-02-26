@@ -119,7 +119,7 @@ jobs:
             See report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}
 
       - name: Send Telegram notification
-        if: ${{ always() && (!inputs.report_on_failure_only || failure()) }}
+        if: always()
         run: |
             java -DconfigFile=notifications/config.json \
               -Dnotifications.base.project="${{ inputs.job_label }}" \
