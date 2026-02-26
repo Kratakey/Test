@@ -121,23 +121,88 @@ jobs:
       - name: Send Telegram notification
         if: ${{ always() && (!inputs.report_on_failure_only || failure()) }}
         run: |
-          REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
-          SUMMARY="allure-report/widgets/summary.json"
-          PASSED=$(jq  '.statistic.passed'  $SUMMARY)
-          FAILED=$(jq  '.statistic.failed'  $SUMMARY)
-          BROKEN=$(jq  '.statistic.broken'  $SUMMARY)
-          SKIPPED=$(jq '.statistic.skipped' $SUMMARY)
-          TOTAL=$(jq   '.statistic.total'   $SUMMARY)
-          STATUS="${{ job.status }}"
-          EMOJI=$([ "$FAILED" = "0" ] && [ "$BROKEN" = "0" ] && echo "✅" || echo "❌")
-          TEXT="${EMOJI} *${{ inputs.job_label }} — ${REPO_NAME}*
-            Passed:  \`${PASSED}\`
-            Failed:  \`${FAILED}\`
-            Broken:  \`${BROKEN}\`
-            Skipped: \`${SKIPPED}\`
-            Total:   \`${TOTAL}\`
-          https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}"
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-            -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-            -d parse_mode="Markdown" \
-            --data-urlencode text="$TEXT"
+            REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+            SUMMARY="allure-report/widgets/summary.json"
+            PASSED=$(jq  '.statistic.passed'  $SUMMARY)
+            FAILED=$(jq  '.statistic.failed'  $SUMMARY)
+            BROKEN=$(jq  '.statistic.broken'  $SUMMARY)
+            SKIPPED=$(jq '.statistic.skipped' $SUMMARY)
+            TOTAL=$(jq   '.statistic.total'   $SUMMARY)
+            EMOJI=$([ "$FAILED" = "0" ] && [ "$BROKEN" = "0" ] && echo "✅" || echo "❌")
+            
+            python3 << EOF
+            import math
+            
+            passed=$PASSED
+            failed=$FAILED
+            broken=$BROKEN
+            skipped=$SKIPPED
+            total=$TOTAL
+            
+            def donut_path(start_angle, end_angle, r_outer, r_inner, cx, cy):
+                if end_angle - start_angle >= 360:
+                    end_angle = start_angle + 359.999
+                start_rad = math.radians(start_angle - 90)
+                end_rad   = math.radians(end_angle   - 90)
+                x1 = cx + r_outer * math.cos(start_rad)
+                y1 = cy + r_outer * math.sin(start_rad)
+                x2 = cx + r_outer * math.cos(end_rad)
+                y2 = cy + r_outer * math.sin(end_rad)
+                x3 = cx + r_inner * math.cos(end_rad)
+                y3 = cy + r_inner * math.sin(end_rad)
+                x4 = cx + r_inner * math.cos(start_rad)
+                y4 = cy + r_inner * math.sin(start_rad)
+                large = 1 if (end_angle - start_angle) > 180 else 0
+                return (f"M {x1:.2f} {y1:.2f} "
+                        f"A {r_outer} {r_outer} 0 {large} 1 {x2:.2f} {y2:.2f} "
+                        f"L {x3:.2f} {y3:.2f} "
+                        f"A {r_inner} {r_inner} 0 {large} 0 {x4:.2f} {y4:.2f} Z")
+            
+            cx, cy, ro, ri = 100, 100, 80, 50
+            segments = [
+                (passed,  "#97cc64"),
+                (failed,  "#fd5a3e"),
+                (broken,  "#ffd050"),
+                (skipped, "#aaa"),
+            ]
+            
+            paths = []
+            angle = 0
+            for count, color in segments:
+                if total > 0 and count > 0:
+                    sweep = 360 * count / total
+                    paths.append(f'<path d="{donut_path(angle, angle+sweep, ro, ri, cx, cy)}" fill="{color}"/>')
+                    angle += sweep
+            
+            if total == 0:
+                paths.append(f'<circle cx="{cx}" cy="{cy}" r="{ro}" fill="#eee"/>'
+                             f'<circle cx="{cx}" cy="{cy}" r="{ri}" fill="white"/>')
+            
+            svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="400" height="220" style="background:#1a1a2e">
+              <g>{''.join(paths)}</g>
+              <text x="{cx}" y="{cy-10}" text-anchor="middle" font-size="22" font-weight="bold" fill="white">{total}</text>
+              <text x="{cx}" y="{cy+14}" text-anchor="middle" font-size="11" fill="#aaa">total</text>
+              <rect x="210" y="30"  width="14" height="14" fill="#97cc64"/>
+              <text x="230" y="42"  font-size="14" fill="white">Passed:  {passed}</text>
+              <rect x="210" y="60"  width="14" height="14" fill="#fd5a3e"/>
+              <text x="230" y="72"  font-size="14" fill="white">Failed:  {failed}</text>
+              <rect x="210" y="90"  width="14" height="14" fill="#ffd050"/>
+              <text x="230" y="102" font-size="14" fill="white">Broken:  {broken}</text>
+              <rect x="210" y="120" width="14" height="14" fill="#aaa"/>
+              <text x="230" y="132" font-size="14" fill="white">Skipped: {skipped}</text>
+            </svg>"""
+            
+            with open("/tmp/donut.svg", "w") as f:
+                f.write(svg)
+            EOF
+            
+            convert /tmp/donut.svg /tmp/donut.png
+            
+            TEXT="${EMOJI} *${{ inputs.job_label }} — ${REPO_NAME}*
+            https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}"
+            
+            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendPhoto" \
+              -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+              -F parse_mode="Markdown" \
+              -F caption="$TEXT" \
+              -F photo="@/tmp/donut.png"
