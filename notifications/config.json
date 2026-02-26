@@ -10,8 +10,8 @@
     "enableSuitesPublishing": true
   },
   "telegram": {
-    "token": "",
-    "chat": "",
+    "token": null,
+    "chat": null,
     "templatePath": "/templates/telegram.ftl"
   }
 }
