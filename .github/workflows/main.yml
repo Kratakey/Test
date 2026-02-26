@@ -132,14 +132,14 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          java "-DconfigFile=notifications/config.json" \
-               "-Dnotifications.base.allureFolder=allure-report/" \
-               "-Dnotifications.base.project=${{ inputs.job_label }}" \
-               "-Dnotifications.base.environment=GitHub Actions" \
-               "-Dnotifications.base.comment= " \
-               "-Dnotifications.base.language=en" \
-               "-Dnotifications.base.enableChart=true" \
-               "-Dnotifications.base.reportLink=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}" \
-               "-Dnotifications.telegram.token=${TELEGRAM_TOKEN}" \
-               "-Dnotifications.telegram.chat=${TELEGRAM_CHAT}" \
-               -jar notifications/allure-notifications.jar
+            java "-DconfigFile=notifications/config.json" \
+                 "-Dbase.allureFolder=allure-report/" \
+                 "-Dbase.project=${{ inputs.job_label }}" \
+                 "-Dbase.environment=GitHub Actions" \
+                 "-Dbase.comment= " \
+                 "-Dbase.language=en" \
+                 "-Dbase.enableChart=true" \
+                 "-Dbase.reportLink=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}" \
+                 "-Dtelegram.token=${TELEGRAM_TOKEN}" \
+                 "-Dtelegram.chat=${TELEGRAM_CHAT}" \
+                 -jar notifications/allure-notifications.jar
