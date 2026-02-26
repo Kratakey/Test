@@ -102,22 +102,6 @@ jobs:
           echo "REPORT_NUM=$REPORT_NUM"
           echo "REPORT_NUM=$REPORT_NUM" >> $GITHUB_ENV
 
-      - name: Send email
-        if: ${{ always() && (!inputs.report_on_failure_only || failure()) }}
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.yandex.ru
-          server_port: 465
-          secure: true
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "[${{ job.status }}] ${{ inputs.job_label }} — ${{ github.repository }}"
-          to: qatestkra@gmail.com
-          from: "GitHub CI <${{ secrets.EMAIL_USERNAME }}>"
-          body: |
-            ${{ inputs.job_label }} finished with status: ${{ job.status }}
-            See report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}
-
       - name: Send Telegram notification
         if: ${{ always() && (!inputs.report_on_failure_only || failure()) }}
         run: |
@@ -129,7 +113,9 @@ jobs:
             SKIPPED=$(jq '.statistic.skipped' $SUMMARY)
             TOTAL=$(jq   '.statistic.total'   $SUMMARY)
             EMOJI=$([ "$FAILED" = "0" ] && [ "$BROKEN" = "0" ] && echo "✅" || echo "❌")
-            
+          
+            sudo apt-get install -y imagemagick librsvg2-bin
+            rsvg-convert /tmp/donut.svg -o /tmp/donut.png
             python3 << EOF
             import math
             
@@ -195,8 +181,8 @@ jobs:
             with open("/tmp/donut.svg", "w") as f:
                 f.write(svg)
             EOF
-            
-            convert /tmp/donut.svg /tmp/donut.png
+          
+            rsvg-convert /tmp/donut.svg -o /tmp/donut.png
             
             TEXT="${EMOJI} *${{ inputs.job_label }} — ${REPO_NAME}*
             https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}"
