@@ -1,0 +1,12 @@
+{
+  "base": {
+    "environment": "GitHub Actions",
+    "language": "en",
+    "allureFolder": "allure-report/",
+    "enableChart": true
+  },
+  "telegram": {
+    "token": "",
+    "chat": ""
+  }
+}
