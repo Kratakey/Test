@@ -1,15 +1,17 @@
 {
   "base": {
-    "project": "",
-    "environment": "",
-    "comment": "",
+    "project": "Test",
+    "environment": "test",
+    "comment": "test",
     "reportLink": "",
     "language": "en",
-    "allureFolder": "allure-report/",
-    "enableChart": true
+    "allureFolder": "build/allure-report/",
+    "enableChart": true,
+    "enableSuitesPublishing": true
   },
   "telegram": {
     "token": "",
-    "chat": ""
+    "chat": "",
+    "templatePath": "/templates/telegram.ftl"
   }
 }
