@@ -121,12 +121,9 @@ jobs:
       - name: Send Telegram notification
         if: always()
         run: |
-            curl -L https://github.com/qa-guru/allure-notifications/releases/download/4.11.0/allure-notifications-4.11.0.jar \
-              -o allure-notifications.jar
-            
-            java -DconfigFile=notifications/config.json \
-              -Dnotifications.base.reportLink="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}" \
-              -Dnotifications.base.project="${{ inputs.job_label }}" \
-              -Dnotifications.telegram.token="${{ secrets.TELEGRAM_BOT_TOKEN }}" \
-              -Dnotifications.telegram.chat="${{ secrets.TELEGRAM_CHAT_ID }}" \
-              -jar allure-notifications.jar
+          java -DconfigFile=notifications/config.json \
+            -Dnotifications.base.reportLink="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}" \
+            -Dnotifications.base.project="${{ inputs.job_label }}" \
+            -Dnotifications.telegram.token="${{ secrets.TELEGRAM_BOT_TOKEN }}" \
+            -Dnotifications.telegram.chat="${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -jar notifications/allure-notifications.jar
