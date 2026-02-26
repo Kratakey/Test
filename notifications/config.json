@@ -1,12 +1,33 @@
 {
   "base": {
-    "environment": "GitHub Actions",
+    "logo": "",
+    "project": "",
+    "environment": "",
+    "comment": "",
+    "reportLink": "",
     "language": "en",
-    "allureFolder": "allure-report/",
-    "enableChart": true
+    "allureFolder": "",
+    "enableChart": false,
+    "enableSuitesPublishing": false,
+    "customData": {}
   },
   "telegram": {
     "token": "",
-    "chat": ""
+    "chat": "",
+    "topic": "",
+    "replyTo": "",
+    "templatePath": "/templates/telegram.ftl"
+  },
+  "mail": {
+    "host": "",
+    "port": "",
+    "username": "",
+    "password": "",
+    "securityProtocol": null,
+    "from": "",
+    "to": "",
+    "cc": "",
+    "bcc": "",
+    "templatePath": "/templates/html.ftl"
   }
 }
