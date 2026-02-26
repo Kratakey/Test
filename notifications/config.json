@@ -2,12 +2,12 @@
   "base": {
     "logo": "",
     "project": "",
-    "environment": "",
+    "environment": "GitHub Actions",
     "comment": "",
     "reportLink": "",
     "language": "en",
-    "allureFolder": "",
-    "enableChart": false,
+    "allureFolder": "allure-report/",
+    "enableChart": true,
     "enableSuitesPublishing": false,
     "customData": {}
   },
@@ -17,17 +17,5 @@
     "topic": "",
     "replyTo": "",
     "templatePath": "/templates/telegram.ftl"
-  },
-  "mail": {
-    "host": "",
-    "port": "",
-    "username": "",
-    "password": "",
-    "securityProtocol": null,
-    "from": "",
-    "to": "",
-    "cc": "",
-    "bcc": "",
-    "templatePath": "/templates/html.ftl"
   }
 }

@@ -118,13 +118,16 @@ jobs:
             ${{ inputs.job_label }} finished with status: ${{ job.status }}
             See report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}
 
-      - name: Send notification via telegram/slack
-        uses: appleboy/telegram-action@master
-        with:
-          to: ${{ secrets.TELEGRAM_CHAT_ID }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          args: |
-              *allure-notifications-${{env.version}} is now available for downloading at the link* https://github.com/${{ github.repository }}/releases/latest/download/allure-notifications-${{env.version}}.jar
-              *See Changelog here*:
-              https://github.com/${{ github.repository }}/releases/latest/
-          format: markdown
+      - name: Send Telegram notification
+        if: ${{ always() && (!inputs.report_on_failure_only || failure()) }}
+        run: |
+            java -DconfigFile=notifications/config.json \
+              -Dnotifications.base.project="${{ inputs.job_label }}" \
+              -Dnotifications.base.environment="GitHub Actions" \
+              -Dnotifications.base.language="en" \
+              -Dnotifications.base.allureFolder="allure-report/" \
+              -Dnotifications.base.enableChart=true \
+              -Dnotifications.base.reportLink="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}" \
+              -Dnotifications.telegram.token="${{ secrets.TELEGRAM_BOT_TOKEN }}" \
+              -Dnotifications.telegram.chat="${{ secrets.TELEGRAM_CHAT_ID }}" \
+              -jar notifications/allure-notifications.jar
