@@ -1,9 +1,5 @@
 {
   "base": {
-    "project": "Test",
-    "environment": "test",
-    "comment": "test",
-    "reportLink": "",
     "language": "en",
     "allureFolder": "allure-report/",
     "enableChart": true,
