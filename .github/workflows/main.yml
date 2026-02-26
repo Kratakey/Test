@@ -118,14 +118,15 @@ jobs:
             ${{ inputs.job_label }} finished with status: ${{ job.status }}
             See report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}
 
-      - name: Send Telegram notification
+      - name: send telegram message on push
         if: always()
-        run: |
-          java "-DconfigFile=notifications/config.json" \
-               "-Dnotifications.base.project=${{ inputs.job_label }}" \
-               "-Dnotifications.base.environment=GitHub Actions" \
-               "-Dnotifications.base.comment= " \
-               "-Dnotifications.base.reportLink=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}" \
-               "-Dnotifications.telegram.token=${{ secrets.TELEGRAM_BOT_TOKEN }}" \
-               "-Dnotifications.telegram.chat=${{ secrets.TELEGRAM_CHAT_ID }}" \
-               -jar notifications/allure-notifications.jar
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+              ${{ github.actor }} created commit:
+              
+              Repository: ${{ github.repository }}
+            
+            https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}
