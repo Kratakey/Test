@@ -128,6 +128,9 @@ jobs:
 
       - name: send telegram message on push
         if: always()
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           java "-DconfigFile=notifications/config.json" \
                "-Dnotifications.base.allureFolder=allure-report/" \
@@ -137,6 +140,6 @@ jobs:
                "-Dnotifications.base.language=en" \
                "-Dnotifications.base.enableChart=true" \
                "-Dnotifications.base.reportLink=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}" \
-               "-Dnotifications.telegram.token=${{ secrets.TELEGRAM_BOT_TOKEN }}" \
-               "-Dnotifications.telegram.chat=${{ secrets.TELEGRAM_CHAT_ID }}" \
+               "-Dnotifications.telegram.token=${TELEGRAM_TOKEN}" \
+               "-Dnotifications.telegram.chat=${TELEGRAM_CHAT}" \
                -jar notifications/allure-notifications.jar
