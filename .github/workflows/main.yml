@@ -121,7 +121,8 @@ jobs:
       - name: send telegram message on push
         if: always()
         run: |
-          java "-Dnotifications.base.allureFolder=allure-report/" \
+          java "-DconfigFile=notifications/config.json" \
+               "-Dnotifications.base.allureFolder=allure-report/" \
                "-Dnotifications.base.project=${{ inputs.job_label }}" \
                "-Dnotifications.base.environment=GitHub Actions" \
                "-Dnotifications.base.comment= " \
