@@ -1,13 +1,16 @@
 {
   "base": {
-    "project": "Test",
+    "project": "My Project",
+    "environment": "Production",
+    "comment": "",
+    "reportLink": "",
     "language": "en",
-    "allureFolder": "allure-report/",
-    "enableChart": true,
-    "enableSuitesPublishing": true,
-    "comment": " "
+    "allureFolder": "allure-report",
+    "enableChart": true
   },
   "telegram": {
+    "token": "",
+    "chat": "",
     "templatePath": "/templates/telegram.ftl"
   }
 }

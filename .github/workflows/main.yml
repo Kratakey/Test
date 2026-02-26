@@ -118,10 +118,23 @@ jobs:
             ${{ inputs.job_label }} finished with status: ${{ job.status }}
             See report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}
 
-      - name: send telegram message on push
+      - name: Generate Allure Report
+        uses: simple-elf/allure-report-action@master
+        if: always()
+        with:
+          allure_results: allure-results
+          allure_report: allure-report
+          allure_history: allure-history
+
+      - name: Send Telegram Notification
         if: always()
         env:
-          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+          ALLURE_REPORT_URL: ${{ vars.ALLURE_REPORT_URL }}
         run: |
-          java "-DconfigFile=notifications/config.json" "-Dnotifications.telegram.token=${{ secrets.TELEGRAM_BOT_TOKEN }}" "-Dnotifications.telegram.chat=${{ secrets.TELEGRAM_CHAT_ID }}" -jar allure-notifications.jar
+          java "-DconfigFile=notifications/config.json" \
+               "-Dnotifications.base.reportLink=${ALLURE_REPORT_URL}" \
+               "-Dnotifications.telegram.token=${TG_BOT_TOKEN}" \
+               "-Dnotifications.telegram.chat=${TG_CHAT_ID}" \
+               -jar notifications/allure-notifications.jar
