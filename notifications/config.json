@@ -1,19 +1,14 @@
 {
   "base": {
-    "logo": "",
-    "project": "",
+    "project": "Test",
     "environment": "GitHub Actions",
     "comment": " ",
-    "reportLink": "",
     "language": "en",
     "allureFolder": "allure-report/",
-    "enableChart": true,
-    "enableSuitesPublishing": false,
-    "customData": {}
+    "enableChart": true
   },
   "telegram": {
     "token": "",
-    "chat": "",
-    "templatePath": "/templates/telegram.ftl"
+    "chat": ""
   }
 }
