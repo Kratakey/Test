@@ -123,11 +123,11 @@ jobs:
           secure: true
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "${{ env.EMOJI }} ${{ inputs.job_label }} — ${{ github.REPO_NAME }}"
+          subject: "${{ env.EMOJI }} ${{ inputs.job_label }} — ${{ env.REPO_NAME }}"
           to: qatestkra@gmail.com
           from: "GitHub CI <${{ secrets.EMAIL_USERNAME }}>"
           html_body: |
-            <p>${{ env.EMOJI }} ${{ inputs.job_label }} — ${{ github.REPO_NAME }}</p>            
+            <p>${{ env.EMOJI }} ${{ inputs.job_label }} — ${{ env.REPO_NAME }}</p>            
             <p>
             Passed:  <code style="color:#2196F3">${{ env.PASSED }}</code><br>
             Failed:  <code style="color:#2196F3">${{ env.FAILED }}</code><br>
