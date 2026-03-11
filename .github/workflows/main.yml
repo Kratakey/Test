@@ -111,6 +111,8 @@ jobs:
           BROKEN_VAL=$(jq '.statistic.broken' $SUMMARY)
           EMOJI=$([ "$FAILED_VAL" = "0" ] && [ "$BROKEN_VAL" = "0" ] && echo "✅" || echo "❌")
           echo "EMOJI=$EMOJI" >> $GITHUB_ENV
+          REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
 
       - name: Send email
         if: ${{ always() && (!inputs.report_on_failure_only || failure()) }}
@@ -125,15 +127,15 @@ jobs:
           to: qatestkra@gmail.com
           from: "GitHub CI <${{ secrets.EMAIL_USERNAME }}>"
           body: |
-            ${{ env.EMOJI }} ${{ inputs.job_label }} — ${{ github.repository }}
-      
-            Passed:  ${{ env.PASSED }}
-            Failed:  ${{ env.FAILED }}
-            Broken:  ${{ env.BROKEN }}
-            Skipped: ${{ env.SKIPPED }}
-            Total:   ${{ env.TOTAL }}
-      
-            Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}/
+            <p>${{ env.EMOJI }} ${{ inputs.job_label }} — ${{ github.REPO_NAME }}</p>            
+            <p>
+            Passed:  <code style="color:#2196F3">${{ env.PASSED }}</code><br>
+            Failed:  <code style="color:#2196F3">${{ env.FAILED }}</code><br>
+            Broken:  <code style="color:#2196F3">${{ env.BROKEN }}</code><br>
+            Skipped: <code style="color:#2196F3">${{ env.SKIPPED }}</code><br>
+            Total:   <code style="color:#2196F3">${{ env.TOTAL }}</code>
+            </p>
+            <p>https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.REPORT_NUM }}/</p>
 
       - name: Generate Allure Report
         uses: simple-elf/allure-report-action@master
