@@ -123,7 +123,7 @@ jobs:
           secure: true
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "[${{ job.status }}] ${{ inputs.job_label }} — ${{ github.repository }}"
+          subject: "${{ env.EMOJI }} ${{ inputs.job_label }} — ${{ github.REPO_NAME }}"
           to: qatestkra@gmail.com
           from: "GitHub CI <${{ secrets.EMAIL_USERNAME }}>"
           body: |
