@@ -126,7 +126,7 @@ jobs:
           subject: "${{ env.EMOJI }} ${{ inputs.job_label }} — ${{ github.REPO_NAME }}"
           to: qatestkra@gmail.com
           from: "GitHub CI <${{ secrets.EMAIL_USERNAME }}>"
-          body: |
+          html_body: |
             <p>${{ env.EMOJI }} ${{ inputs.job_label }} — ${{ github.REPO_NAME }}</p>            
             <p>
             Passed:  <code style="color:#2196F3">${{ env.PASSED }}</code><br>
